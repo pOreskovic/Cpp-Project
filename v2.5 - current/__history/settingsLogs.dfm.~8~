@@ -1,0 +1,49 @@
+object logsPage: TlogsPage
+  Left = 0
+  Top = 0
+  Caption = 'logsPage'
+  ClientHeight = 555
+  ClientWidth = 1094
+  Color = clSilver
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object langTE: TEdit
+    Left = 216
+    Top = 80
+    Width = 121
+    Height = 21
+    TabOrder = 0
+    Text = 'langTE'
+  end
+  object styleTE: TEdit
+    Left = 216
+    Top = 120
+    Width = 121
+    Height = 21
+    TabOrder = 1
+    Text = 'styleTE'
+  end
+  object fontTE: TEdit
+    Left = 216
+    Top = 160
+    Width = 121
+    Height = 21
+    TabOrder = 2
+    Text = 'fontTE'
+  end
+  object fontSizeTE: TEdit
+    Left = 216
+    Top = 200
+    Width = 121
+    Height = 21
+    TabOrder = 3
+    Text = 'fontSizeTE'
+  end
+end

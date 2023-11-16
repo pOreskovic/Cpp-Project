@@ -1,0 +1,36 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{37123596-00AC-4960-A248-165D33150AD8}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="NoxConnect.cbproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="NoxConnect">
+        <MSBuild Projects="NoxConnect.cbproj"/>
+    </Target>
+    <Target Name="NoxConnect:Clean">
+        <MSBuild Projects="NoxConnect.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="NoxConnect:Make">
+        <MSBuild Projects="NoxConnect.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="NoxConnect"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="NoxConnect:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="NoxConnect:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

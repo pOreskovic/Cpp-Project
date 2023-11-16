@@ -1,0 +1,18 @@
+class korisnik{
+	public:
+		String korisnickoIme, lozinka;
+
+		korisnik(String un, String pas){
+			korisnickoIme = un;
+            lozinka = pas;
+		}
+
+		void posoliLozinku(){
+			lozinka = lozinka + "letMeAddSaltTo" + korisnickoIme;
+		}
+
+		void hashirajLozinku(){
+
+		}
+
+}

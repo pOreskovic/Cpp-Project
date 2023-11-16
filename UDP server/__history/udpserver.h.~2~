@@ -1,0 +1,33 @@
+//---------------------------------------------------------------------------
+
+#ifndef udpserverH
+#define udpserverH
+//---------------------------------------------------------------------------
+#include <System.Classes.hpp>
+#include <Vcl.Controls.hpp>
+#include <Vcl.StdCtrls.hpp>
+#include <Vcl.Forms.hpp>
+#include <IdBaseComponent.hpp>
+#include <IdComponent.hpp>
+#include <IdUDPBase.hpp>
+#include <IdUDPServer.hpp>
+#include <IdGlobal.hpp>
+#include <IdSocketHandle.hpp>
+//---------------------------------------------------------------------------
+class TudpForm : public TForm
+{
+__published:	// IDE-managed Components
+	TIdUDPServer *IdUDPServer1;
+	TLabel *Label1;
+	TButton *closeBTN;
+	void __fastcall IdUDPServer1UDPRead(TIdUDPListenerThread *AThread, const TIdBytes AData,
+          TIdSocketHandle *ABinding);
+	void __fastcall closeBTNClick(TObject *Sender);
+private:	// User declarations
+public:		// User declarations
+	__fastcall TudpForm(TComponent* Owner);
+};
+//---------------------------------------------------------------------------
+extern PACKAGE TudpForm *udpForm;
+//---------------------------------------------------------------------------
+#endif

@@ -1,0 +1,33 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "dbAdmin.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+TadminPage *adminPage;
+//---------------------------------------------------------------------------
+__fastcall TadminPage::TadminPage(TComponent* Owner)
+	: TForm(Owner)
+{
+}
+//---------------------------------------------------------------------------
+void __fastcall TadminPage::dbChosenCBChange(TObject *Sender)
+{
+    //onchange -> switch database
+}
+//---------------------------------------------------------------------------
+void __fastcall TadminPage::FormShow(TObject *Sender)
+{
+	//onshow -> load database
+	adminSql->Active = false;
+	dbChosenCB->ItemIndex = 0;
+
+	adminSql->SQL->Add("SELECT username,firstName,lastName,email,admin FROM noxianconnect.users");
+	adminSql->Open();
+	adminSql->Active = true;
+
+}
+//---------------------------------------------------------------------------

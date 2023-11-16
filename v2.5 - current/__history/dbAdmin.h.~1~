@@ -1,0 +1,21 @@
+//---------------------------------------------------------------------------
+
+#ifndef dbAdminH
+#define dbAdminH
+//---------------------------------------------------------------------------
+#include <System.Classes.hpp>
+#include <Vcl.Controls.hpp>
+#include <Vcl.StdCtrls.hpp>
+#include <Vcl.Forms.hpp>
+//---------------------------------------------------------------------------
+class TadminPage : public TForm
+{
+__published:	// IDE-managed Components
+private:	// User declarations
+public:		// User declarations
+	__fastcall TadminPage(TComponent* Owner);
+};
+//---------------------------------------------------------------------------
+extern PACKAGE TadminPage *adminPage;
+//---------------------------------------------------------------------------
+#endif

@@ -1,0 +1,490 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include <memory>
+#include <vector>
+#include <Registry.hpp>
+#include "builder.h"
+#include "translationHeader.h"
+#include "extraClasses.h"
+#include "DLLfunctions.h"
+#include "builds.cpp"  // kreirao objekt XMLDocument
+#include "System.JSON.hpp" // za citanje JSON-a
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+TitemsPage *itemsPage;
+//---------------------------------------------------------------------------
+__fastcall TitemsPage::TitemsPage(TComponent* Owner)
+	: TForm(Owner)
+{
+	translation["buildsBox"] = {
+		{
+			{"EN", "Your Builder"},
+			{"HR", "Builder"}
+		}
+	};
+	translation["addBuildBTN"] = {
+		{
+			{"EN", "Add build"},
+			{"HR", "Dodaj build"}
+		}
+	};
+	translation["updateBTN"] = {
+		{
+			{"EN", "Update build"},
+			{"HR", "Azuriraj build"}
+		}
+	};
+	translation["deleteBuildBTN"] = {
+		{
+			{"EN", "Delete build"},
+			{"HR", "Izbrisi build"}
+		}
+	};
+	translation["refreshBTN"] = {
+		{
+			{"EN", "Refresh XML"},
+			{"HR", "Osvjezi XML"}
+		}
+	};
+	translation["clearBTN"] = {
+		{
+			{"EN", "Clear"},
+			{"HR", "Ocisti"}
+		}
+	};
+	translation["itemsBox"] = {
+		{
+			{"EN", "List of all Items"},
+			{"HR", "Lista Itema"}
+		}
+	};
+	translation["itemAddBTN"] = {
+		{
+			{"EN", "Add Item"},
+			{"HR", "Dodaj Item"}
+		}
+	};
+	translation["itemUpdateBTN"] = {
+		{
+			{"EN", "Update Item"},
+			{"HR", "Azuriraj Item"}
+		}
+	};
+	translation["itemDeleteBTN"] = {
+		{
+			{"EN", "Delete Item"},
+			{"HR", "Izbrisi Item"}
+		}
+	};
+	translation["itemNameL"] = {
+		{
+			{"EN", "Item Name"},
+			{"HR", "Naziv Itema"}
+		}
+	};
+	translation["itemTypeL"] = {
+		{
+			{"EN", "Item Type"},
+			{"HR", "Tip Itema"}
+		}
+	};
+	translation["stat1L"] = {
+		{
+			{"EN", "Stat Change"},
+			{"HR", "Promjena Atributa"}
+		}
+	};
+	translation["stat2L"] = {
+		{
+			{"EN", "Stat Change"},
+			{"HR", "Promjena Atributa"}
+		}
+	};
+	translation["pow1L"] = {
+		{
+			{"EN", "Power"},
+			{"HR", "Snaga"}
+		}
+	};
+    translation["pow2L"] = {
+		{
+			{"EN", "Power"},
+			{"HR", "Snaga"}
+		}
+	};
+	translation["itemCostL"] = {
+		{
+			{"EN", "Item Cost"},
+			{"HR", "Cijena Itema"}
+		}
+	};
+	translation["refreshJSON"] = {
+		{
+			{"EN", "Refresh JSON"},
+			{"HR", "Osvjezi JSON"}
+		}
+	};
+	translation["saveJSONBTN"] = {
+		{
+			{"EN", "Save Changes"},
+			{"HR", "Spremi Promjene"}
+		}
+	};
+}
+//---------------------------------------------------------------------------
+// XML KOD
+void __fastcall TitemsPage::FormShow(TObject *Sender)
+{
+	//ucitaj XML odmah
+	_di_IXMLbuilderType builder = Getbuilder(buildsXML);
+
+	buildsList->Items->Clear();
+	for(int i = 0; i < builder->Count; i++){
+		buildsList->Items->Add();
+		buildsList->Items->Item[i]->Caption = builder->build[i]->champion;
+		buildsList->Items->Item[i]->SubItems->Add(builder->build[i]->firstItem);
+		buildsList->Items->Item[i]->SubItems->Add(builder->build[i]->secondItem);
+		buildsList->Items->Item[i]->SubItems->Add(builder->build[i]->thirdItem);
+		buildsList->Items->Item[i]->SubItems->Add(builder->build[i]->fourthItem);
+		buildsList->Items->Item[i]->SubItems->Add(builder->build[i]->buildCost);
+	}
+
+	//ucitaj JSON odmah
+	std::unique_ptr<TStringStream> jsonStream(new TStringStream); //include memory
+	jsonStream->LoadFromFile("./items.json");
+
+	TJSONObject* jsonFile = (TJSONObject*)TJSONObject::ParseJSONValue(jsonStream->DataString); //whole json file
+	TJSONArray* items = (TJSONArray*)TJSONObject::ParseJSONValue(jsonFile->GetValue("itemsList")->ToString()); //array of items
+	itemsLV->Clear();
+	for(int i = 0; i < items->Count; i++){
+		//save from JSON to variables
+		String itemName = items->Items[i]->GetValue<UnicodeString>("itemName");
+		String type = items->Items[i]->GetValue<UnicodeString>("type");
+		String stat1 = items->Items[i]->GetValue<UnicodeString>("stat1");
+		String power1 = items->Items[i]->GetValue<UnicodeString>("power1");
+		String stat2 = items->Items[i]->GetValue<UnicodeString>("stat2");
+		String power2 = items->Items[i]->GetValue<UnicodeString>("power2");
+		int cost = items->Items[i]->GetValue<int>("cost");
+		//load to itemsLV
+		itemsLV->Items->Add();
+		itemsLV->Items->Item[i]->Caption = itemName;
+		itemsLV->Items->Item[i]->SubItems->Add(type);
+		itemsLV->Items->Item[i]->SubItems->Add(stat1);
+		itemsLV->Items->Item[i]->SubItems->Add(power1);
+		itemsLV->Items->Item[i]->SubItems->Add(stat2);
+		itemsLV->Items->Item[i]->SubItems->Add(power2);
+        itemsLV->Items->Item[i]->SubItems->Add(cost);
+	}
+
+    TIniFile* ini = new TIniFile(GetCurrentDir() + "\\settings.ini");
+	String Lang = ini->ReadString("Language","Selected", "EN");
+	translateForm(this, Lang, translation);
+}
+//---------------------------------------------------------------------------
+void __fastcall TitemsPage::addBuildBTNClick(TObject *Sender)
+{
+	if (buildsList->ItemIndex >= 0){
+        ShowMessage("ERROR! You must unselect currently selected build to add new builds!");
+	}else{
+		//vector u kojem su Item-i
+		/*std::vector<String> items14;
+		items14.push_back(item1TE->Text);
+		items14.push_back(item2TE->Text);
+		items14.push_back(item3TE->Text);
+		items14.push_back(item4TE->Text);*/
+
+		build noviBuild(item1TE->Text,item2TE->Text,item3TE->Text,item4TE->Text);
+
+		for(int i = 0; i < noviBuild.items.size(); i++){
+			for(int j = 0; j < itemsLV->Items->Count; j++){
+				if(noviBuild.items[i] == itemsLV->Items->Item[j]->Caption){
+					noviBuild.setCost(noviBuild.getCost() + itemsLV->Items->Item[j]->SubItems->Strings[5].ToInt());
+				}
+			}
+		}
+
+        _di_IXMLbuilderType builder = Getbuilder(buildsXML);
+		_di_IXMLbuildType build = builder->Add();
+		build->champion = champTE->Text;
+		build->firstItem = item1TE->Text;
+		build->secondItem = item2TE->Text;
+		build->thirdItem = item3TE->Text;
+		build->fourthItem = item4TE->Text;
+		build->buildCost = noviBuild.getCost();
+
+
+		buildsXML->SaveToFile(buildsXML->FileName);
+
+
+		champTE->Text = "";
+		item1TE->Text = "";
+		item2TE->Text = "";
+		item3TE->Text = "";
+		item4TE->Text = "";
+		buildsList->ItemIndex =  -1;
+	}
+
+}
+//---------------------------------------------------------------------------
+void __fastcall TitemsPage::refreshBTNClick(TObject *Sender)
+{
+    _di_IXMLbuilderType builder = Getbuilder(buildsXML);
+
+	buildsList->Items->Clear();
+	for(int i = 0; i < builder->Count; i++){
+		buildsList->Items->Add();
+		buildsList->Items->Item[i]->Caption = builder->build[i]->champion;
+		buildsList->Items->Item[i]->SubItems->Add(builder->build[i]->firstItem);
+		buildsList->Items->Item[i]->SubItems->Add(builder->build[i]->secondItem);
+		buildsList->Items->Item[i]->SubItems->Add(builder->build[i]->thirdItem);
+		buildsList->Items->Item[i]->SubItems->Add(builder->build[i]->fourthItem);
+		buildsList->Items->Item[i]->SubItems->Add(builder->build[i]->buildCost);
+	}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TitemsPage::deleteBuildBTNClick(TObject *Sender)
+{
+	if (buildsList->ItemIndex >= 0){
+		_di_IXMLbuilderType builder = Getbuilder(buildsXML);
+		builder->Delete(buildsList->ItemIndex);
+		buildsXML->SaveToFile(buildsXML->FileName);
+
+		//ucitaj ponovo
+        buildsList->Items->Clear();
+		for(int i = 0; i < builder->Count; i++){
+			buildsList->Items->Add();
+			buildsList->Items->Item[i]->Caption = builder->build[i]->champion;
+			buildsList->Items->Item[i]->SubItems->Add(builder->build[i]->firstItem);
+			buildsList->Items->Item[i]->SubItems->Add(builder->build[i]->secondItem);
+			buildsList->Items->Item[i]->SubItems->Add(builder->build[i]->thirdItem);
+			buildsList->Items->Item[i]->SubItems->Add(builder->build[i]->fourthItem);
+			buildsList->Items->Item[i]->SubItems->Add(builder->build[i]->buildCost);
+		}
+        champTE->Text = "";
+		item1TE->Text = "";
+		item2TE->Text = "";
+		item3TE->Text = "";
+		item4TE->Text = "";
+		buildsList->ItemIndex =  -1;
+	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TitemsPage::buildsListSelectItem(TObject *Sender, TListItem *Item,
+          bool Selected)
+{
+	if (buildsList->ItemIndex >= 0){
+		int i = buildsList->ItemIndex;
+
+		champTE->Text = buildsList->Items->Item[i]->Caption;
+		item1TE->Text = buildsList->Items->Item[i]->SubItems->Strings[0];
+		item2TE->Text = buildsList->Items->Item[i]->SubItems->Strings[1];
+		item3TE->Text = buildsList->Items->Item[i]->SubItems->Strings[2];
+		item4TE->Text = buildsList->Items->Item[i]->SubItems->Strings[3];
+	}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TitemsPage::updateBTNClick(TObject *Sender)
+{
+	if (buildsList->ItemIndex >= 0){
+		int i = buildsList->ItemIndex;
+		_di_IXMLbuilderType builder = Getbuilder(buildsXML);
+		builder->build[i]->champion = champTE->Text;
+		builder->build[i]->firstItem = item1TE->Text;
+		builder->build[i]->secondItem = item2TE->Text;
+		builder->build[i]->thirdItem = item3TE->Text;
+        builder->build[i]->fourthItem = item4TE->Text;
+		buildsXML->SaveToFile(buildsXML->FileName);
+		//ucitaj ponovo XML
+        buildsList->Items->Clear();
+		for(int i = 0; i < builder->Count; i++){
+			buildsList->Items->Add();
+			buildsList->Items->Item[i]->Caption = builder->build[i]->champion;
+			buildsList->Items->Item[i]->SubItems->Add(builder->build[i]->firstItem);
+			buildsList->Items->Item[i]->SubItems->Add(builder->build[i]->secondItem);
+			buildsList->Items->Item[i]->SubItems->Add(builder->build[i]->thirdItem);
+			buildsList->Items->Item[i]->SubItems->Add(builder->build[i]->fourthItem);
+			buildsList->Items->Item[i]->SubItems->Add(builder->build[i]->buildCost);
+		}
+        champTE->Text = "";
+		item1TE->Text = "";
+		item2TE->Text = "";
+		item3TE->Text = "";
+		item4TE->Text = "";
+		buildsList->ItemIndex =  -1;
+	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TitemsPage::clearBTNClick(TObject *Sender)
+{
+	champTE->Text = "";
+	item1TE->Text = "";
+	item2TE->Text = "";
+	item3TE->Text = "";
+	item4TE->Text = "";
+    buildsList->ItemIndex =  -1;
+}
+//---------------------------------------------------------------------------
+//JSON KOD
+
+
+void __fastcall TitemsPage::itemAddBTNClick(TObject *Sender)
+{
+	itemsLV->Items->Add();
+	int lastIndex = itemsLV->Items->Count - 1;
+	itemsLV->Items->Item[lastIndex]->Caption = itemNameTE->Text;
+	itemsLV->Items->Item[lastIndex]->SubItems->Add(itemTypeTE->Text);
+	itemsLV->Items->Item[lastIndex]->SubItems->Add(stat1TE->Text);
+	itemsLV->Items->Item[lastIndex]->SubItems->Add(pow1TE->Text);
+	itemsLV->Items->Item[lastIndex]->SubItems->Add(stat2TE->Text);
+	itemsLV->Items->Item[lastIndex]->SubItems->Add(pow2TE->Text);
+	itemsLV->Items->Item[lastIndex]->SubItems->Add(itemCostTE->Text);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TitemsPage::itemDeleteBTNClick(TObject *Sender)
+{
+	itemsLV->DeleteSelected();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TitemsPage::saveJSONBTNClick(TObject *Sender)
+{
+	String itemsJson;
+	itemsJson = "{";
+	itemsJson += "\"itemsList\":";
+	itemsJson += "[";
+	for(int i = 0; i < itemsLV->Items->Count; i++){
+		itemsJson +=
+		"{"
+			"\"itemName\":\"" + itemsLV->Items->Item[i]->Caption + "\"," +
+			"\"type\":\"" + itemsLV->Items->Item[i]->SubItems->Strings[0] + "\"," +
+			"\"stat1\":\"" + itemsLV->Items->Item[i]->SubItems->Strings[1] + "\"," +
+			"\"power1\":\"" + itemsLV->Items->Item[i]->SubItems->Strings[2] + "\"," +
+			"\"stat2\":\"" + itemsLV->Items->Item[i]->SubItems->Strings[3] + "\"," +
+			"\"power2\":\"" + itemsLV->Items->Item[i]->SubItems->Strings[4] + "\"," +
+			"\"cost\":\"" + itemsLV->Items->Item[i]->SubItems->Strings[5] + "\"" +
+		"}";
+		itemsJson += (i+1 != itemsLV->Items->Count) ? "," : "";
+	}
+
+	itemsJson += "]";
+	itemsJson += "}";
+
+	//Application->MessageBox(itemsJson.w_str(), L"", 0);  //prije Parsinga
+
+	itemsJson = ((TJSONObject*)TJSONObject::ParseJSONValue(itemsJson))->Format(2);
+	//Application->MessageBox(itemsJson.w_str(), L"", 0);   //poslje parsinga
+
+	std::unique_ptr<TStringStream> ss(new TStringStream);
+	ss->WriteString(itemsJson);
+	ss->SaveToFile("../../items.json");
+}
+//---------------------------------------------------------------------------
+void __fastcall TitemsPage::itemsLVSelectItem(TObject *Sender, TListItem *Item, bool Selected)
+
+{
+	if (itemsLV->ItemIndex >= 0){
+		int i = itemsLV->ItemIndex;
+
+		itemNameTE->Text = itemsLV->Items->Item[i]->Caption;
+		itemTypeTE->Text = itemsLV->Items->Item[i]->SubItems->Strings[0];
+		stat1TE->Text = itemsLV->Items->Item[i]->SubItems->Strings[1];
+		pow1TE->Text = itemsLV->Items->Item[i]->SubItems->Strings[2];
+		stat2TE->Text = itemsLV->Items->Item[i]->SubItems->Strings[3];
+		pow2TE->Text = itemsLV->Items->Item[i]->SubItems->Strings[4];
+        itemCostTE->Text = itemsLV->Items->Item[i]->SubItems->Strings[5];
+	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TitemsPage::itemUpdateBTNClick(TObject *Sender)
+{
+	if (itemsLV->ItemIndex >= 0){
+        int i = itemsLV->ItemIndex;
+		itemsLV->Items->Item[i]->Caption = itemNameTE->Text;
+		itemsLV->Items->Item[i]->SubItems->Strings[0] = itemTypeTE->Text;
+		itemsLV->Items->Item[i]->SubItems->Strings[1] = stat1TE->Text;
+		itemsLV->Items->Item[i]->SubItems->Strings[2] = pow1TE->Text;
+		itemsLV->Items->Item[i]->SubItems->Strings[3] = stat2TE->Text;
+		itemsLV->Items->Item[i]->SubItems->Strings[4] = pow2TE->Text;
+		itemsLV->Items->Item[i]->SubItems->Strings[5] = itemCostTE->Text;
+	}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TitemsPage::refreshJSONClick(TObject *Sender)
+{
+    std::unique_ptr<TStringStream> jsonStream(new TStringStream); //include memory
+	jsonStream->LoadFromFile("./items.json");
+
+	TJSONObject* jsonFile = (TJSONObject*)TJSONObject::ParseJSONValue(jsonStream->DataString); //whole json file
+	TJSONArray* items = (TJSONArray*)TJSONObject::ParseJSONValue(jsonFile->GetValue("itemsList")->ToString()); //array of items
+	itemsLV->Clear();
+	for(int i = 0; i < items->Count; i++){
+		//save from JSON to variables
+		String itemName = items->Items[i]->GetValue<UnicodeString>("itemName");
+		String type = items->Items[i]->GetValue<UnicodeString>("type");
+		String stat1 = items->Items[i]->GetValue<UnicodeString>("stat1");
+		String power1 = items->Items[i]->GetValue<UnicodeString>("power1");
+		String stat2 = items->Items[i]->GetValue<UnicodeString>("stat2");
+		String power2 = items->Items[i]->GetValue<UnicodeString>("power2");
+		int cost = items->Items[i]->GetValue<int>("cost");
+		//load to itemsLV
+		itemsLV->Items->Add();
+		itemsLV->Items->Item[i]->Caption = itemName;
+		itemsLV->Items->Item[i]->SubItems->Add(type);
+		itemsLV->Items->Item[i]->SubItems->Add(stat1);
+		itemsLV->Items->Item[i]->SubItems->Add(power1);
+		itemsLV->Items->Item[i]->SubItems->Add(stat2);
+		itemsLV->Items->Item[i]->SubItems->Add(power2);
+        itemsLV->Items->Item[i]->SubItems->Add(cost);
+	}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TitemsPage::downloadBTNClick(TObject *Sender)
+{
+    progBar->Position = 0;
+	TFileStream* fstream = new TFileStream("./backgrounds.rar", fmCreate);
+    httpDownload->Get("https://www107.zippyshare.com/d/8R29yYT5/19669/backgrounds.rar", fstream);
+	delete fstream;
+    downSuccL->Visible = false;
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TitemsPage::httpDownloadWorkBegin(TObject *ASender, TWorkMode AWorkMode,
+          __int64 AWorkCountMax)
+{
+	progBar->Position = 0;
+	progBar->Max = AWorkCountMax;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TitemsPage::httpDownloadWork(TObject *ASender, TWorkMode AWorkMode,
+          __int64 AWorkCount)
+{
+	progBar->Position = AWorkCount;
+	//Application->ProcessMessages();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TitemsPage::httpDownloadWorkEnd(TObject *ASender, TWorkMode AWorkMode)
+
+{
+    downSuccL->Visible = true;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TitemsPage::applySpeedClick(TObject *Sender)
+{
+	speedLimiter->RecvBitsPerSec = KbytesToBytes(speedSet->Text.ToInt());
+
+}
+//---------------------------------------------------------------------------
+

@@ -1,0 +1,8 @@
+#ifdef _WIN32
+#include <tchar.h>
+#endif
+
+//prototypes
+extern "C" double __declspec(dllexport) __stdcall sum(double a, double b);
+
+extern "C" void __stdcall translateForm(TForm* LoginForm, String Language, const std::map<String, std::map<String, String>>& translation)

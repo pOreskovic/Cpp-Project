@@ -1,0 +1,89 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "admin.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+TadminPage *adminPage;
+//---------------------------------------------------------------------------
+__fastcall TadminPage::TadminPage(TComponent* Owner)
+	: TForm(Owner)
+{
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TadminPage::userSortChange(TObject *Sender)
+{
+	//sort for users
+	String sortBy = userSort->Items->Strings[userSort->ItemIndex];
+	usersTable->IndexFieldNames = sortBy;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TadminPage::clearUsersClick(TObject *Sender)
+{
+	//clear values
+	userFilter->ItemIndex = -1;
+	userSort->ItemIndex = -1;
+	filterValueTE->Text = "";
+
+    //turn of filtering and sorting
+	usersTable->IndexFieldNames = "";
+    usersTable->Filtered = false;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TadminPage::filterOKClick(TObject *Sender)
+{
+    usersTable->Filtered = false;
+	String filter = filterValueTE->Text;
+	String filterBy = userFilter->Items->Strings[userFilter->ItemIndex];
+
+	if(filter != "" && userFilter->ItemIndex >= 0){
+		usersTable->Filter = filterBy + "=" + "'" + filter + "'";
+		usersTable->Filtered = true;
+	}
+    else ShowMessage("Set Filter Settings Properly!");
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TadminPage::FormShow(TObject *Sender)
+{
+	Width = 1200;
+	Height = 750;
+
+		usersTable->Active = true;
+		gamesTable->Active = true;
+		skinsTable->Active = true;
+		champsTable->Active = true;
+
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TadminPage::gamesTableCalcFields(TDataSet *DataSet)
+{
+	float k = gamesTable->FieldByName("Kills")->AsInteger;
+	float d = gamesTable->FieldByName("Deaths")->AsInteger;
+	float a = gamesTable->FieldByName("Assists")->AsInteger;
+	float kda = (k+a) / d;
+
+	gamesTable->FieldByName("KDA")->AsFloat = kda;
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TadminPage::uploadBTNClick(TObject *Sender)
+{
+	if(imageUploader->Execute()){
+		skinsTable->Edit();
+		static_cast<TBlobField*> (skinsTable->FieldByName("preview"))->LoadFromFile(imageUploader->FileName);
+        skinsTable->Post();
+	}
+}
+//---------------------------------------------------------------------------
+

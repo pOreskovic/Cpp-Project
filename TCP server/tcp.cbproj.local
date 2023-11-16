@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.029,E:\FAKS\AppC++\TCP server\TCPserver.dfm=C:\Users\Pero\Documents\Embarcadero\Studio\Projects\TCPserver.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.016,=C:\Users\Pero\Documents\Embarcadero\Studio\Projects\Project5PCH1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.492,C:\Users\Pero\Documents\Embarcadero\Studio\Projects\TCPserver.h=C:\Users\Pero\Documents\Embarcadero\Studio\Projects\Unit4.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.492,C:\Users\Pero\Documents\Embarcadero\Studio\Projects\TCPserver.cpp=C:\Users\Pero\Documents\Embarcadero\Studio\Projects\Unit4.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.492,C:\Users\Pero\Documents\Embarcadero\Studio\Projects\TCPserver.dfm=C:\Users\Pero\Documents\Embarcadero\Studio\Projects\Unit4.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.029,E:\FAKS\AppC++\TCP server\TCPserver.cpp=C:\Users\Pero\Documents\Embarcadero\Studio\Projects\TCPserver.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.111,=C:\Users\Pero\Documents\Embarcadero\Studio\Projects\Unit4.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.029,E:\FAKS\AppC++\TCP server\TCPserver.h=C:\Users\Pero\Documents\Embarcadero\Studio\Projects\TCPserver.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.636,E:\FAKS\AppC++\TCP server\TCPserverPCH1.h=C:\Users\Pero\Documents\Embarcadero\Studio\Projects\Project5PCH1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.823,E:\FAKS\AppC++\TCP server\tcp.cbproj=C:\Users\Pero\Documents\Embarcadero\Studio\Projects\Project5.cbproj</Transaction>
+  </Transactions>
+</BorlandProject>

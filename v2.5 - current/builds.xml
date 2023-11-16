@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<builder>
+	<build>
+		<champion>Akali</champion>
+		<firstItem>Dorans Ring</firstItem>
+		<secondItem>Boots of Lucidity</secondItem>
+		<thirdItem>Hextech Rocketbelt</thirdItem>
+		<fourthItem>Demonic Embrace</fourthItem>
+		<buildCost>7550</buildCost>
+	</build>	
+	<build>
+		<champion>Evelynn</champion>
+		<firstItem>Dorans Shield</firstItem>
+		<secondItem>Lucids</secondItem>
+		<thirdItem>Hextech Rocketbelt</thirdItem>
+		<fourthItem></fourthItem>
+		<buildCost>4550</buildCost>
+	</build>
+</builder>

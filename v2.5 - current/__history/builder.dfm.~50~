@@ -1,0 +1,561 @@
+object itemsPage: TitemsPage
+  Left = 0
+  Top = 0
+  Caption = 'Items'
+  ClientHeight = 777
+  ClientWidth = 1678
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poDesktopCenter
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object buildsBox: TGroupBox
+    Left = 16
+    Top = 24
+    Width = 729
+    Height = 577
+    Caption = 'Your Builder'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 0
+    object champL: TLabel
+      Left = 32
+      Top = 429
+      Width = 97
+      Height = 21
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'Champion'
+    end
+    object item1L: TLabel
+      Left = 156
+      Top = 429
+      Width = 109
+      Height = 21
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'Item 1'
+    end
+    object item2L: TLabel
+      Left = 296
+      Top = 429
+      Width = 113
+      Height = 21
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'Item 2'
+    end
+    object item3L: TLabel
+      Left = 440
+      Top = 429
+      Width = 113
+      Height = 21
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'Item 3'
+    end
+    object item4L: TLabel
+      Left = 584
+      Top = 429
+      Width = 113
+      Height = 21
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'Item 4'
+    end
+    object addBuildBTN: TButton
+      Left = 24
+      Top = 352
+      Width = 113
+      Height = 41
+      Caption = 'Add build'
+      TabOrder = 0
+      OnClick = addBuildBTNClick
+    end
+    object buildsList: TListView
+      Left = 24
+      Top = 40
+      Width = 673
+      Height = 281
+      Columns = <
+        item
+          Caption = 'Champion'
+          Width = 92
+        end
+        item
+          Alignment = taCenter
+          Caption = 'Item 1'
+          Width = 120
+        end
+        item
+          Alignment = taCenter
+          Caption = 'Item 2'
+          Width = 120
+        end
+        item
+          Alignment = taCenter
+          Caption = 'Item 3'
+          Width = 120
+        end
+        item
+          Alignment = taCenter
+          Caption = 'Item 4'
+          Width = 120
+        end
+        item
+          Alignment = taCenter
+          Caption = 'Build Cost'
+          Width = 100
+        end>
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 1
+      ViewStyle = vsReport
+      OnSelectItem = buildsListSelectItem
+    end
+    object champTE: TEdit
+      Left = 32
+      Top = 456
+      Width = 97
+      Height = 27
+      Alignment = taCenter
+      TabOrder = 2
+    end
+    object clearBTN: TButton
+      Left = 328
+      Top = 520
+      Width = 75
+      Height = 25
+      Caption = 'Clear'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 3
+      OnClick = clearBTNClick
+    end
+    object deleteBuildBTN: TButton
+      Left = 584
+      Top = 352
+      Width = 113
+      Height = 41
+      Caption = 'Delete Build'
+      TabOrder = 4
+      OnClick = deleteBuildBTNClick
+    end
+    object item1TE: TEdit
+      Left = 156
+      Top = 456
+      Width = 109
+      Height = 27
+      TabOrder = 5
+    end
+    object item2TE: TEdit
+      Left = 296
+      Top = 456
+      Width = 113
+      Height = 27
+      TabOrder = 6
+    end
+    object item3TE: TEdit
+      Left = 440
+      Top = 456
+      Width = 113
+      Height = 27
+      TabOrder = 7
+    end
+    object item4TE: TEdit
+      Left = 584
+      Top = 456
+      Width = 113
+      Height = 27
+      TabOrder = 8
+    end
+    object updateBTN: TButton
+      Left = 304
+      Top = 352
+      Width = 113
+      Height = 41
+      Caption = 'Update build'
+      TabOrder = 9
+      OnClick = updateBTNClick
+    end
+    object refreshBTN: TButton
+      Left = 24
+      Top = 520
+      Width = 75
+      Height = 25
+      Caption = 'Refresh XML'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 10
+      OnClick = refreshBTNClick
+    end
+  end
+  object itemsBox: TGroupBox
+    Left = 768
+    Top = 24
+    Width = 889
+    Height = 577
+    Caption = 'List of all items'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 1
+    object itemNameL: TLabel
+      Left = 40
+      Top = 431
+      Width = 121
+      Height = 19
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'Item Name'
+    end
+    object itemTypeL: TLabel
+      Left = 192
+      Top = 431
+      Width = 121
+      Height = 19
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'Item Type'
+    end
+    object stat1L: TLabel
+      Left = 344
+      Top = 431
+      Width = 121
+      Height = 19
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'Stat Change'
+    end
+    object stat2L: TLabel
+      Left = 496
+      Top = 431
+      Width = 121
+      Height = 19
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'Stat Change'
+    end
+    object itemCostL: TLabel
+      Left = 648
+      Top = 431
+      Width = 121
+      Height = 19
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'Item Cost'
+    end
+    object pow1L: TLabel
+      Left = 368
+      Top = 522
+      Width = 73
+      Height = 19
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'Power'
+    end
+    object pow2L: TLabel
+      Left = 520
+      Top = 522
+      Width = 73
+      Height = 19
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'Power'
+    end
+    object itemsLV: TListView
+      Left = 16
+      Top = 40
+      Width = 769
+      Height = 281
+      Columns = <
+        item
+          Caption = 'Item Name'
+          Width = 140
+        end
+        item
+          Alignment = taCenter
+          Caption = 'Type'
+          Width = 120
+        end
+        item
+          Alignment = taCenter
+          Caption = 'Stat Change'
+          Width = 120
+        end
+        item
+          Alignment = taCenter
+          Caption = 'Power'
+          Width = 70
+        end
+        item
+          Alignment = taCenter
+          Caption = 'Stat 2 Change'
+          Width = 130
+        end
+        item
+          Alignment = taCenter
+          Caption = 'Power 2'
+          Width = 70
+        end
+        item
+          Alignment = taCenter
+          Caption = 'Item Cost'
+          Width = 110
+        end>
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 0
+      ViewStyle = vsReport
+      OnSelectItem = itemsLVSelectItem
+    end
+    object itemUpdateBTN: TButton
+      Left = 344
+      Top = 352
+      Width = 113
+      Height = 41
+      Caption = 'Update Item'
+      TabOrder = 1
+      OnClick = itemUpdateBTNClick
+    end
+    object itemAddBTN: TButton
+      Left = 16
+      Top = 352
+      Width = 113
+      Height = 41
+      Caption = 'Add Item'
+      TabOrder = 2
+      OnClick = itemAddBTNClick
+    end
+    object itemDeleteBTN: TButton
+      Left = 672
+      Top = 352
+      Width = 113
+      Height = 41
+      Caption = 'Delete Item'
+      TabOrder = 3
+      OnClick = itemDeleteBTNClick
+    end
+    object itemNameTE: TEdit
+      Left = 40
+      Top = 456
+      Width = 121
+      Height = 27
+      TabOrder = 4
+    end
+    object itemTypeTE: TEdit
+      Left = 192
+      Top = 456
+      Width = 121
+      Height = 27
+      TabOrder = 5
+    end
+    object stat1TE: TEdit
+      Left = 344
+      Top = 456
+      Width = 121
+      Height = 27
+      TabOrder = 6
+    end
+    object stat2TE: TEdit
+      Left = 496
+      Top = 456
+      Width = 121
+      Height = 27
+      TabOrder = 7
+    end
+    object itemCostTE: TEdit
+      Left = 648
+      Top = 456
+      Width = 121
+      Height = 27
+      NumbersOnly = True
+      TabOrder = 8
+    end
+    object pow1TE: TEdit
+      Left = 368
+      Top = 489
+      Width = 73
+      Height = 27
+      NumbersOnly = True
+      TabOrder = 9
+    end
+    object pow2TE: TEdit
+      Left = 520
+      Top = 489
+      Width = 73
+      Height = 27
+      NumbersOnly = True
+      TabOrder = 10
+    end
+    object saveJSONBTN: TButton
+      Left = 688
+      Top = 513
+      Width = 97
+      Height = 38
+      Caption = 'Save Changes'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 11
+      OnClick = saveJSONBTNClick
+    end
+    object refreshJSON: TButton
+      Left = 16
+      Top = 512
+      Width = 97
+      Height = 38
+      Caption = 'Refresh JSON'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 12
+      OnClick = refreshJSONClick
+    end
+  end
+  object download: TGroupBox
+    Left = 808
+    Top = 607
+    Width = 809
+    Height = 154
+    Caption = 'Download pre-filled JSON file'
+    TabOrder = 2
+    object Label1: TLabel
+      Left = 16
+      Top = 33
+      Width = 113
+      Height = 16
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'Speed in KB/ps'
+      Color = clMaroon
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clMaroon
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentColor = False
+      ParentFont = False
+    end
+    object downSuccL: TLabel
+      Left = 288
+      Top = 104
+      Width = 177
+      Height = 15
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'Download Completed!'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clMaroon
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Visible = False
+    end
+    object applySpeed: TButton
+      Left = 16
+      Top = 82
+      Width = 113
+      Height = 25
+      Caption = 'Apply Speed Limit'
+      TabOrder = 0
+      OnClick = applySpeedClick
+    end
+    object downloadBTN: TButton
+      Left = 672
+      Top = 94
+      Width = 113
+      Height = 25
+      Caption = 'Download JSON'
+      TabOrder = 1
+      OnClick = downloadBTNClick
+    end
+    object progBar: TProgressBar
+      Left = 16
+      Top = 125
+      Width = 769
+      Height = 17
+      TabOrder = 2
+    end
+    object speedSet: TEdit
+      Left = 16
+      Top = 55
+      Width = 113
+      Height = 21
+      Alignment = taCenter
+      NumbersOnly = True
+      TabOrder = 3
+    end
+  end
+  object buildsXML: TXMLDocument
+    Active = True
+    FileName = 'E:\FAKS\AppC++\V2.3 - JSON i XML\builds.xml'
+    NodeIndentStr = #9
+    Options = [doNodeAutoCreate, doNodeAutoIndent, doAttrNull, doAutoPrefix, doNamespaceDecl]
+    Left = 680
+    Top = 528
+  end
+  object httpDownload: TIdHTTP
+    Intercept = speedLimiter
+    OnWork = httpDownloadWork
+    OnWorkBegin = httpDownloadWorkBegin
+    OnWorkEnd = httpDownloadWorkEnd
+    ProxyParams.BasicAuthentication = False
+    ProxyParams.ProxyPort = 0
+    Request.ContentLength = -1
+    Request.ContentRangeEnd = -1
+    Request.ContentRangeStart = -1
+    Request.ContentRangeInstanceLength = -1
+    Request.Accept = 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+    Request.BasicAuthentication = False
+    Request.UserAgent = 'Mozilla/3.0 (compatible; Indy Library)'
+    Request.Ranges.Units = 'bytes'
+    Request.Ranges = <>
+    HTTPOptions = [hoForceEncodeParams]
+    Left = 704
+    Top = 640
+  end
+  object speedLimiter: TIdInterceptThrottler
+    BitsPerSec = 0
+    RecvBitsPerSec = 0
+    SendBitsPerSec = 0
+    Left = 704
+    Top = 696
+  end
+end

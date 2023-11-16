@@ -1,0 +1,11 @@
+class korisnik{
+	public:
+		String korisnickoIme, lozinka;
+
+		korisnik(String un, String pas){
+			korisnickoIme = un;
+            lozinka = pas;
+		}
+
+
+}

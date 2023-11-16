@@ -1,0 +1,21 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "LogReg.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+TregisterPage *registerPage;
+//---------------------------------------------------------------------------
+__fastcall TregisterPage::TregisterPage(TComponent* Owner)
+	: TForm(Owner)
+{
+}
+//---------------------------------------------------------------------------
+void __fastcall TregisterPage::croClick(TObject *Sender)
+{
+    ShowMessage("Pozdrav");
+}
+//---------------------------------------------------------------------------

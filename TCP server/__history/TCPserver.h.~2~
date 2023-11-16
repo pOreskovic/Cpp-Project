@@ -1,0 +1,29 @@
+//---------------------------------------------------------------------------
+
+#ifndef TCPserverH
+#define TCPserverH
+//---------------------------------------------------------------------------
+#include <System.Classes.hpp>
+#include <Vcl.Controls.hpp>
+#include <Vcl.StdCtrls.hpp>
+#include <Vcl.Forms.hpp>
+#include <IdBaseComponent.hpp>
+#include <IdComponent.hpp>
+#include <IdCustomTCPServer.hpp>
+#include <IdTCPServer.hpp>
+#include <IdContext.hpp>
+//---------------------------------------------------------------------------
+class TtcpForm : public TForm
+{
+__published:	// IDE-managed Components
+	TLabel *serverL;
+	TIdTCPServer *server;
+	void __fastcall serverExecute(TIdContext *AContext);
+private:	// User declarations
+public:		// User declarations
+	__fastcall TtcpForm(TComponent* Owner);
+};
+//---------------------------------------------------------------------------
+extern PACKAGE TtcpForm *tcpForm;
+//---------------------------------------------------------------------------
+#endif

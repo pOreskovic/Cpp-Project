@@ -1,0 +1,27 @@
+//---------------------------------------------------------------------------
+
+#ifndef udpserverH
+#define udpserverH
+//---------------------------------------------------------------------------
+#include <System.Classes.hpp>
+#include <Vcl.Controls.hpp>
+#include <Vcl.StdCtrls.hpp>
+#include <Vcl.Forms.hpp>
+#include <IdBaseComponent.hpp>
+#include <IdComponent.hpp>
+#include <IdUDPBase.hpp>
+#include <IdUDPServer.hpp>
+//---------------------------------------------------------------------------
+class TForm4 : public TForm
+{
+__published:	// IDE-managed Components
+	TIdUDPServer *IdUDPServer1;
+	TLabel *Label1;
+private:	// User declarations
+public:		// User declarations
+	__fastcall TForm4(TComponent* Owner);
+};
+//---------------------------------------------------------------------------
+extern PACKAGE TForm4 *Form4;
+//---------------------------------------------------------------------------
+#endif

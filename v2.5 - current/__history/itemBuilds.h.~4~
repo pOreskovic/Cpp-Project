@@ -1,0 +1,36 @@
+//---------------------------------------------------------------------------
+
+#ifndef itemBuildsH
+#define itemBuildsH
+//---------------------------------------------------------------------------
+#include <System.Classes.hpp>
+#include <Vcl.Controls.hpp>
+#include <Vcl.StdCtrls.hpp>
+#include <Vcl.Forms.hpp>
+#include <Vcl.ComCtrls.hpp>
+#include <Xml.XMLDoc.hpp>
+#include <Xml.xmldom.hpp>
+#include <Xml.XMLIntf.hpp>
+//---------------------------------------------------------------------------
+class TitemsPage : public TForm
+{
+__published:	// IDE-managed Components
+	TListView *buildsList;
+	TXMLDocument *buildsXML;
+	TButton *loadBuildsBTN;
+	TEdit *Edit1;
+	TEdit *Edit2;
+	TEdit *Edit3;
+	TEdit *Edit4;
+	TEdit *Edit5;
+	TButton *addBuildBTN;
+	TButton *deleteBuildBTN;
+	void __fastcall loadBuildsBTNClick(TObject *Sender);
+private:	// User declarations
+public:		// User declarations
+	__fastcall TitemsPage(TComponent* Owner);
+};
+//---------------------------------------------------------------------------
+extern PACKAGE TitemsPage *itemsPage;
+//---------------------------------------------------------------------------
+#endif

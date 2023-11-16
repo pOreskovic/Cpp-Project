@@ -1,0 +1,56 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#include <System.JSON.hpp>
+#pragma hdrstop
+
+#include "skins.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma link "frxClass"
+#pragma link "frxDBSet"
+#pragma link "frxExportBaseDialog"
+#pragma link "frxExportPDF"
+#pragma link "frxExportRTF"
+#pragma link "gtClasses"
+#pragma resource "*.dfm"
+TskinsPage *skinsPage;
+//---------------------------------------------------------------------------
+__fastcall TskinsPage::TskinsPage(TComponent* Owner)
+	: TForm(Owner)
+{
+}
+//---------------------------------------------------------------------------
+void __fastcall TskinsPage::FormShow(TObject *Sender)
+{
+	try{
+		champsTable->Active = true;
+		skinsConnection->Connected = true;
+		skinsTable->Active = true;
+	}catch(const Exception& e){
+        ShowMessage("Database Error");
+	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TskinsPage::FormClose(TObject *Sender, TCloseAction &Action)
+{
+	skinsConnection->Connected = false;
+	skinsTable->Active = false;
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TskinsPage::exportPDFClick(TObject *Sender)
+{
+	skinsReport->PrepareReport();
+    skinsReport->Export(pdfExport);
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TskinsPage::rpMoneyCalcClick(TObject *Sender)
+{
+	//_di_InoxianSoap noxianSoapService = GetInoxianSoap();
+}
+//---------------------------------------------------------------------------
+

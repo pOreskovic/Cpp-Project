@@ -1,0 +1,48 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "settingsLogs.h"
+#include "statclib.h"
+#include <memory>
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+TlogsPage *logsPage;
+//---------------------------------------------------------------------------
+__fastcall TlogsPage::TlogsPage(TComponent* Owner)
+	: TForm(Owner)
+{
+}
+//---------------------------------------------------------------------------
+void __fastcall TlogsPage::FormShow(TObject *Sender)
+{
+	//open file - add to memory
+	std::unique_ptr<TMemoryStream> logStream(new TMemoryStream);
+	logStream->LoadFromFile("settingsLogs.cff");
+
+	//read header
+	customFileFormat header;
+	logStream->Read(&header, sizeof(customFileFormat));
+
+	//is this correct file format?
+	if(String(header.name) != "LogsFileFormat" || header.version != 1.0){
+		ShowMessage("Wrong Format");
+		return;
+	}
+
+	//read log
+	settingsLogs->Items->Clear();
+	settings tmp;
+	int logCount = (logStream->Size - sizeof(header)) / sizeof(settings);
+	logStream->Read(&tmp, sizeof(settings));
+
+	for(int i = 0; i < logCount; i++){
+		ShowMessage(tmp.changeTime);
+		ShowMessage(String(tmp.lang));
+		ShowMessage(String(tmp.font));
+		logStream->NewInstance();
+	}
+}
+//---------------------------------------------------------------------------

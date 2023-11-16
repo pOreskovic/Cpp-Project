@@ -1,0 +1,38 @@
+object registerPage: TregisterPage
+  Left = 0
+  Top = 0
+  Caption = 'Noxus Connect - Log In'
+  ClientHeight = 464
+  ClientWidth = 433
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  PixelsPerInch = 96
+  TextHeight = 13
+  object cro: TImage
+    Left = 72
+    Top = 304
+    Width = 105
+    Height = 105
+  end
+  object loginBTN: TButton
+    Left = 160
+    Top = 160
+    Width = 97
+    Height = 41
+    Caption = 'Prijavi se'
+    TabOrder = 0
+  end
+  object Button1: TButton
+    Left = 160
+    Top = 216
+    Width = 97
+    Height = 41
+    Caption = 'Registriraj se'
+    TabOrder = 1
+  end
+end

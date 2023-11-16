@@ -1,0 +1,44 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "udpserver.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+TudpForm *udpForm;
+//---------------------------------------------------------------------------
+__fastcall TudpForm::TudpForm(TComponent* Owner)
+	: TForm(Owner)
+{
+}
+//---------------------------------------------------------------------------
+void __fastcall TudpForm::UDPserverUDPRead(TIdUDPListenerThread *AThread, const TIdBytes AData,
+          TIdSocketHandle *ABinding)
+{
+	//preuzmi poslane podatke
+	String clientRequest = BytesToString(AData);
+	String champ;
+
+	if (clientRequest == "Global"){
+        pickrateQuery->Active = false;
+		String sql = "";
+		pickrateQuery->SQL->Clear();
+		pickrateQuery->SQL->Add(sql);
+		pickrateQuery->Open();
+		champ = pickrateQuery->FieldByName("champPlayed")->AsString;
+	}else{
+		champ = "userovWR";
+	}
+
+
+	//posalji odgovor
+	UDPserver->Send(ABinding->PeerIP, ABinding->PeerPort, champ);
+}
+//---------------------------------------------------------------------------
+void __fastcall TudpForm::closeBTNClick(TObject *Sender)
+{
+    udpForm->Close();
+}
+//---------------------------------------------------------------------------

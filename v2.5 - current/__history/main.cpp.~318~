@@ -1,0 +1,616 @@
+﻿//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#include <vector>
+#include <jpeg.hpp>
+#include <memory>
+#pragma hdrstop
+
+#include "main.h"
+#include "Login.h"
+#include "translationHeader.h"
+#include "DLLfunctions.h"
+#include "settings.h"
+#include "bugReport.h"
+#include "Login.h"
+#include "champions.h"
+#include "admin.h"
+#include "builder.h"
+#include "skins.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma link "frxClass"
+#pragma link "frxExportBaseDialog"
+#pragma link "frxExportPDF"
+#pragma link "frxExportRTF"
+#pragma link "frxDBSet"
+#pragma resource "*.dfm"
+TmainPage *mainPage;
+//funkcije iz static library
+std::vector<String> getColumnStringValues(TFDQuery* table, String columnName);
+void addItemsC(TComboBox* box, std::vector<String> v);
+
+void setColumnWidth(){
+	int items = mainPage->mainGrid->Columns->Count;
+		for(int i=0; i < items; i++){
+			mainPage->mainGrid->Columns->Items[i]->Width = 110;
+		}
+}
+
+//---------------------------------------------------------------------------
+__fastcall TmainPage::TmainPage(TComponent* Owner)
+	: TForm(Owner)
+{
+	translation["hello"] = {
+		{
+			{"EN", "Welcome"},
+			{"HR", "Dobrodošli"}
+		}
+	};
+	translation["addGameBTN"] = {
+		{
+			{"EN", "Add game"},
+			{"HR", "Dodaj odigranu igru"}
+		}
+	};
+	translation["logoutBTN"] = {
+		{
+			{"EN", "Log out"},
+			{"HR", "Odjava"}
+		}
+	};
+	translation["newGameBox"] = {
+		{
+			{"EN", "Add Game Stats"},
+			{"HR", "Dodaj statistiku odigrane igre"}
+		}
+	};
+	translation["skinsBTN"] = {
+		{
+			{"EN", "Available Skins"},
+			{"HR", "Dostupni Skinovi"}
+		}
+	};
+	translation["intro1"] = {
+		{
+			{"EN", "Click here to change type of view in the table ->"},
+			{"HR", "Ovdje odaberi podatke koje želiš vidjeti ->"}
+		}
+	};
+	translation["intro2"] = {
+		{
+			{"EN", "When you select a column, Your KDA ratio will be calculated here ->"},
+			{"HR", "Kada odaberete stupac u tablici pokazati će se Vas KDA ->"}
+		}
+	};
+	translation["intro3"] = {
+		{
+			{"EN", "Create your own builds and items in Item Builder"},
+			{"HR", "Izradite vlastite buildove i iteme u Item Builderu"}
+		}
+	};
+	translation["intro4"] = {
+		{
+			{"EN", "Settings Page --------->"},
+			{"HR", "Postavke ---------->"}
+		}
+	};
+	translation["intro5"] = {
+		{
+			{"EN", "Only Admin Page <----------"},
+			{"HR", "Stranica za administratore <---"}
+
+		}
+	};
+	translation["intro6"] = {
+		{
+			{"EN", "Report a bug ------->"},
+			{"HR", "Prijavi grešku ---->"}
+		}
+	};
+	translation["createReport"] = {
+		{
+			{"EN", "Create Report"},
+			{"HR", "Izradi Izvjestaj"}
+		}
+	};
+	translation["udpStart"] = {
+		{
+			{"EN", "Search for:"},
+			{"HR", "Trazi:"}
+		}
+	};
+	translation["globalBox"] = {
+		{
+			{"EN", "Highest Pickrate Champion"},
+			{"HR", "Najbiraniji Champion"}
+		}
+	};
+
+}
+//---------------------------------------------------------------------------
+void __fastcall TmainPage::FormClose(TObject *Sender, TCloseAction &Action)
+{
+	loginPage->Close();
+
+	//zapisi postavke
+    TRegistry* reg = new TRegistry;
+	reg->RootKey = HKEY_LOCAL_MACHINE;
+	UnicodeString mykey = "Software\\NoxianConnect";
+
+	reg->CreateKey(mykey);
+	if(reg->OpenKey(mykey,true)){
+		reg->WriteInteger("mainSqlType", sqlCB->ItemIndex);
+        reg->WriteString("lastGameEntry", lastEntryValue->Caption);
+        reg->CloseKey();
+	}
+
+	delete reg;
+}
+//---------------------------------------------------------------------------
+void __fastcall TmainPage::settingsImageClick(TObject *Sender)
+{
+    settingsPage->Show();
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TmainPage::adminImageClick(TObject *Sender)
+{
+	//provjeraAdmina
+	if(adminConfirmed->Visible == True)
+		adminPage->Show();
+	else
+        ShowMessage("Samo administrator smije pristupiti ovom dijelu programa!");
+
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TmainPage::FormShow(TObject *Sender)
+{
+	//Load podataka tocno tog usera
+	String id = userID->Text;
+	String select = "SELECT champPlayed, count(*) as Played, sum(won) as Wins, sum(kills) as Kills, sum(deaths) as Deaths, sum(assists) as Assists, (sum(won) / count(*) * 100) as WRpercent ";
+	String from = "from noxianconnect.usergames where userID = " + id + " group by champPlayed";
+	String sql = select + from;
+
+	//DB connect
+	mainConnection->Connected = true;
+	mainSql->SQL->Clear();
+	mainSql->SQL->Add(sql);
+	mainSql->Active = true;
+
+    //jezik
+    TIniFile* ini = new TIniFile(GetCurrentDir() + "\\settings.ini");
+	String lang = ini->ReadString("Language", "Selected", "EN");
+
+	if (lang == "HR")
+		translateForm(this, lang, translation);
+	else
+		translateForm(this, lang, translation);
+
+	//style
+
+	String style = ini->ReadString("Apperience", "colorMode", "lightMode");
+	if (style == "lightMode"){
+		mainPage->Color = clSilver;
+		hello->Font->Color = clMaroon;
+		helloUser->Font->Color = clBlack;
+		champL->Font->Color = clBlack;
+		kL->Font->Color = clBlack;
+		dL->Font->Color = clBlack;
+		aL->Font->Color = clBlack;
+	}
+	else{
+		mainPage->Color = clMaroon;
+		mainPage->Font->Color = clWhite;
+		hello->Font->Color = clWhite;
+		helloUser->Font->Color = clBlack;
+		champL->Font->Color = clWhite;
+		kL->Font->Color = clWhite;
+		dL->Font->Color = clWhite;
+		aL->Font->Color = clWhite;
+	}
+
+	//Font
+
+	String font = ini->ReadString("Apperience", "font", "Tahoma");
+	int fontSize = ini->ReadString("Apperience", "fontSize", "10").ToInt();
+	delete ini;
+
+	hello->Font->Name = font;
+	hello->Font->Size = fontSize + 30;
+	helloUser->Font->Name = font;
+	helloUser->Font->Size = fontSize + 30;
+	sqlCB->Font->Name = font;
+	sqlCB->Font->Size = fontSize;
+	addGameBTN->Font->Name = font;
+	addGameBTN->Font->Size = fontSize;
+	logoutBTN->Font->Name = font;
+	logoutBTN->Font->Size = fontSize;
+	builderBTN->Font->Name = font;
+	builderBTN->Font->Size = fontSize;
+	newGameBox->Font->Name = font;
+	newGameBox->Font->Size = fontSize;
+	champL->Font->Name = font;
+	champL->Font->Size = fontSize;
+	kL->Font->Name = font;
+	kL->Font->Size = fontSize;
+	dL->Font->Name = font;
+	dL->Font->Size = fontSize;
+	aL->Font->Name = font;
+	aL->Font->Size = fontSize;
+	wonCB->Font->Name = font;
+	wonCB->Font->Size = fontSize;
+	kdaBox->Font->Name = font;
+	kdaBox->Font->Size = fontSize;
+	selectedChamp->Font->Name = font;
+	selectedChamp->Font->Size = fontSize;
+	kda->Font->Name = font;
+	kda->Font->Size = fontSize;
+	globalBox->Font->Name = font;
+	globalBox->Font->Size = fontSize;
+	udpStart->Font->Name = font;
+	udpStart->Font->Size = fontSize;
+	udpOptions->Font->Name = font;
+	udpOptions->Font->Size = fontSize;
+	pickRateTE->Font->Name = font;
+	pickRateTE->Font->Size = fontSize;
+	skinsBTN->Font->Name = font;
+	skinsBTN->Font->Size = fontSize;
+
+
+    //duzina columna - da stane sve bez scrolla
+	setColumnWidth();
+
+	//hello user poravnanje
+	if(font == "Broadway")
+		helloUser->Left = hello->Left + hello->Width + 15;
+	else
+		helloUser->Left = hello->Left + hello->Width + 5;
+
+	//u combo box za unos nove igre stavi sve champione koji postoje u bazi
+	newGameSQL->SQL->Clear();
+	newGameSQL->SQL->Add("SELECT * FROM noxianconnect.champions");
+	newGameSQL->Active = true;
+	std::vector<String> champions = getColumnStringValues(newGameSQL, "name");
+	newGameSQL->Active = false;
+	newGameSQL->SQL->Clear();
+    addItemsC(champsCB, champions);
+
+
+
+	//load resource image
+	HINSTANCE ResourceDLL;
+	if((ResourceDLL = LoadLibrary(L"DLLfunctions.dll")) == NULL){
+		ShowMessage("Cannot load DLL file! - App Icon Wont Be Displayed");
+		return;
+	}
+
+	TResourceStream* rs = new TResourceStream((int)ResourceDLL, "LOGO_PNG", RT_RCDATA);
+	logoMain->Picture->LoadFromStream(rs);
+	delete rs;
+	FreeLibrary(ResourceDLL);
+
+	//load menu images
+	exitAppImage->Picture->LoadFromFile(GetCurrentDir() + "//images//exit.png");
+	settingsImage->Picture->LoadFromFile(GetCurrentDir() + "//images//settings.png");
+	adminImage->Picture->LoadFromFile(GetCurrentDir() + "//images//admin.png");
+	adminConfirmed->Picture->LoadFromFile(GetCurrentDir() + "//images//check.png");
+
+    //Windows Registry Settings load
+	TRegistry* reg = new TRegistry;
+	reg->RootKey = HKEY_LOCAL_MACHINE;
+	UnicodeString mykey = "Software\\NoxianConnect";
+	String wallpaper;
+	if(reg->KeyExists(mykey))
+		if(reg->OpenKey(mykey,true)){
+			if(reg->ReadBool("Tutorial"))
+				helpBox->Checked = True;
+			else
+				helpBox->Checked = False;
+
+			sqlCB->ItemIndex = reg->ReadInteger("mainSqlType");
+			lastEntryValue->Caption = reg->ReadString("lastGameEntry");
+			wallpaper = reg->ReadString("wallpaper");
+
+			reg->CloseKey();
+		}
+	delete reg;
+
+    if(sqlCB->ItemIndex == 0){
+		String id = userID->Text;
+		String select = "SELECT champPlayed, Kills, Deaths, Assists, Won ";
+		String from = "from noxianconnect.usergames where userID = " + id;
+		String sql = select + from;
+
+		mainConnection->Connected = true;
+		mainSql->Active = false;
+		mainSql->SQL->Clear();
+		mainSql->SQL->Add(sql);
+		mainSql->Active = true;
+
+		setColumnWidth();
+	}else if(sqlCB->ItemIndex == 1){
+		String select = "SELECT champPlayed, count(*) as Played, sum(won) as Wins, sum(kills) as Kills, sum(deaths) as Deaths, sum(assists) as Assists, (sum(won) / count(*) * 100) as WRpercent ";
+		String from = "from noxianconnect.usergames group by champPlayed";
+		String sql = select + from;
+
+		mainConnection->Connected = true;
+        mainSql->Active = false;
+		mainSql->SQL->Clear();
+		mainSql->SQL->Add(sql);
+		mainSql->Active = true;
+
+		setColumnWidth();
+	}else{
+        String id = userID->Text;
+		String select = "SELECT champPlayed, count(*) as Played, sum(won) as Wins, sum(kills) as Kills, sum(deaths) as Deaths, sum(assists) as Assists, (sum(won) / count(*) * 100) as WRpercent ";
+		String from = "from noxianconnect.usergames where userID = " + id + " group by champPlayed";
+		String sql = select + from;
+
+		mainConnection->Connected = true;
+        mainSql->Active = false;
+		mainSql->SQL->Clear();
+		mainSql->SQL->Add(sql);
+		mainSql->Active = true;
+
+        setColumnWidth();
+	}
+
+
+	background->Picture->LoadFromFile(".//backgrounds//" + wallpaper + ".jpg");
+
+
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TmainPage::logoutBTNClick(TObject *Sender)
+{
+	mainPage->Hide();
+	if(settingsPage->Visible == true)
+		settingsPage->Hide();
+	if(adminPage->Visible == true)
+		adminPage->Hide();
+	adminConfirmed->Visible = false;
+
+	loginPage->usernameTE->Text = "";
+    loginPage->passwordTE->Text = "";
+	loginPage->Show();
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TmainPage::builderBTNClick(TObject *Sender)
+{
+    itemsPage->Show();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TmainPage::addGameBTNClick(TObject *Sender)
+{
+    String delim = ",";
+	String id = userID->Text;
+	String k = killsTE->Text;
+	String d = deathsTE->Text;
+	String a = assistsTE->Text;
+	String w = '0';
+	if (wonCB->ItemIndex == 0){
+		w = '1';
+	}
+	//String champ = champTE->Text;
+    String champ = champsCB->Items->Strings[champsCB->ItemIndex];
+	newGameSQL->SQL->Clear();
+	String sql = "INSERT INTO noxianconnect.usergames(userID,Kills, Deaths, Assists, Won, champPlayed) VALUES(" + id + delim + k + delim
+                    + d + delim + a + delim + w + delim + "'" + champ + "'" + ")";
+	newGameSQL->SQL->Add(sql);
+	newGameSQL->ExecSQL();
+	//refresh tablice
+	mainSql->Active = false;
+	mainSql->Active = true;
+    //duzina columna - da stane sve bez scrolla
+	setColumnWidth();
+
+    champsCB->ItemIndex = -1;
+	killsTE->Text = "";
+	deathsTE->Text = "";
+	assistsTE->Text = "";
+	wonCB->ItemIndex = -1;
+
+	String currentDate = Date();
+	String currentTime = Time();
+	lastEntryValue->Caption = currentDate + " " + currentTime;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TmainPage::helpBoxClick(TObject *Sender)
+{
+	bool tutorial;
+	if(helpBox->Checked == true){
+		intro1->Visible = true;
+		intro2->Visible = true;
+		intro3->Visible = true;
+		intro4->Visible = true;
+		intro5->Visible = true;
+		intro6->Visible = true;
+		tutorial = true;
+	}
+	else{
+		intro1->Visible = false;
+		intro2->Visible = false;
+		intro3->Visible = false;
+		intro4->Visible = false;
+		intro5->Visible = false;
+		intro6->Visible = false;
+		tutorial = false;
+	}
+
+	TRegistry* reg = new TRegistry;
+	reg->RootKey = HKEY_LOCAL_MACHINE;
+	UnicodeString mykey = "Software\\NoxianConnect";
+
+	reg->CreateKey(mykey);
+	if(reg->OpenKey(mykey,true)){
+		reg->WriteBool("Tutorial",tutorial);
+        reg->CloseKey();
+	}
+
+	delete reg;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TmainPage::skinsBTNClick(TObject *Sender)
+{
+    skinsPage->Show();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TmainPage::createReportClick(TObject *Sender)
+{
+	if(sqlCB->Items->Strings[sqlCB->ItemIndex] != "Per Champion"){
+		ShowMessage("Report only available for Per Champion View");
+        return;
+	}
+
+	if(exportType->ItemIndex >= 0){
+		if(exportType->Items->Strings[exportType->ItemIndex] == "PDF"){
+            report->PrepareReport(true);
+			report->Export(pdfexport);
+			exportType->ItemIndex = -1;
+		}
+		else{
+			report->Export(rtfexport);
+            exportType->ItemIndex = -1;
+		}
+	}else ShowMessage("Export file type not selected!");
+
+
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TmainPage::udpStartClick(TObject *Sender)
+{
+	if(udpOptions->ItemIndex >= 0 && udpOptions->Items->Strings[udpOptions->ItemIndex] == "Global"){
+		String option = udpOptions->Items->Strings[udpOptions->ItemIndex];
+		UDPclient->SendBuffer("192.168.31.224", 55555, ToBytes(option));
+
+		String poruka = UDPclient->ReceiveString();
+		pickRateTE->Text = poruka;
+
+	}else if (udpOptions->ItemIndex >= 0 && udpOptions->Items->Strings[udpOptions->ItemIndex] == "User"){
+		String user = userID->Text;
+		UDPclient->SendBuffer("192.168.31.224", 55555, ToBytes(user));
+
+		String poruka = UDPclient->ReceiveString();
+        pickRateTE->Text = poruka;
+	}
+	else ShowMessage("Option not chosen");
+
+}
+//---------------------------------------------------------------------------
+
+float ChampInfo(TFDQuery* table,String Champion, String field){
+
+	while(!table->Eof){
+		if(table->FieldByName("champPlayed")->AsString == Champion){
+			return table->FieldByName(field)->AsFloat;
+		}
+	}
+    return -1;
+}
+
+void __fastcall TmainPage::mainGridCellClick(TColumn *Column)
+{
+	int row = mainGrid->DataSource->DataSet->RecNo; //- 1;
+	for(int i = 0; i < row + 1; i++){
+		mainSql->FieldByName("champPlayed");
+	}
+	selectedChamp->Text = mainSql->FieldByName("champPlayed")->AsString;
+	float k = ChampInfo(mainSql, selectedChamp->Text, "Kills");
+	float d = ChampInfo(mainSql, selectedChamp->Text, "Deaths");
+	float a = ChampInfo(mainSql, selectedChamp->Text, "Assists");
+
+    kda->Text = kdaCalc(k,d,a);
+
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TmainPage::exitAppImageClick(TObject *Sender)
+{
+    loginPage->Close();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TmainPage::sqlCBChange(TObject *Sender)
+{
+	mainSql->Filtered = false;
+	mainSql->IndexFieldNames = "";
+
+	//promjeni pogled
+	if(sqlCB->ItemIndex == 0){
+		String id = userID->Text;
+		String select = "SELECT champPlayed, Kills, Deaths, Assists, Won ";
+		String from = "from noxianconnect.usergames where userID = " + id;
+		String sql = select + from;
+
+		mainConnection->Connected = true;
+		mainSql->Active = false;
+		mainSql->SQL->Clear();
+		mainSql->SQL->Add(sql);
+		mainSql->Active = true;
+
+		setColumnWidth();
+	}else if(sqlCB->ItemIndex == 1){
+		String select = "SELECT champPlayed, count(*) as Played, sum(won) as Wins, sum(kills) as Kills, sum(deaths) as Deaths, sum(assists) as Assists, (sum(won) / count(*) * 100) as WRpercent ";
+		String from = "from noxianconnect.usergames group by champPlayed";
+		String sql = select + from;
+
+		mainConnection->Connected = true;
+        mainSql->Active = false;
+		mainSql->SQL->Clear();
+		mainSql->SQL->Add(sql);
+		mainSql->Active = true;
+
+		setColumnWidth();
+	}else{
+        String id = userID->Text;
+		String select = "SELECT champPlayed, count(*) as Played, sum(won) as Wins, sum(kills) as Kills, sum(deaths) as Deaths, sum(assists) as Assists, (sum(won) / count(*) * 100) as WRpercent ";
+		String from = "from noxianconnect.usergames where userID = " + id + " group by champPlayed";
+		String sql = select + from;
+
+		mainConnection->Connected = true;
+        mainSql->Active = false;
+		mainSql->SQL->Clear();
+		mainSql->SQL->Add(sql);
+		mainSql->Active = true;
+
+        setColumnWidth();
+	}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TmainPage::bugImageClick(TObject *Sender)
+{
+    TbugReportPage* reportPage = new TbugReportPage(this);
+	if(reportPage->ShowModal() == mrClose)
+		ShowMessage("Uspjeh");
+	delete reportPage;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TmainPage::sfApplyClick(TObject *Sender)
+{
+	if(filterTE->Text.Length() > 0){
+		mainSql->Filter = "champPlayed='" + filterTE->Text + "'";
+		mainSql->Filtered = true;
+	}
+
+	if(sortCB->ItemIndex >= 0){
+        mainSql->IndexFieldNames = sortCB->Items->Strings[sortCB->ItemIndex];
+	}
+}
+//---------------------------------------------------------------------------
+

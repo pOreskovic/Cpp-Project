@@ -1,0 +1,68 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "TCPserver.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+TtcpForm *tcpForm;
+//---------------------------------------------------------------------------
+__fastcall TtcpForm::TtcpForm(TComponent* Owner)
+	: TForm(Owner)
+{
+}
+//---------------------------------------------------------------------------
+void __fastcall TtcpForm::serverExecute(TIdContext *AContext)
+{
+	//dohvati informacije za unos novog korisnika
+	String uname = AContext->Connection->Socket->ReadLn();
+	String pass = AContext->Connection->Socket->ReadLn();
+	String fname = AContext->Connection->Socket->ReadLn();
+	String lname = AContext->Connection->Socket->ReadLn();
+	String email = AContext->Connection->Socket->ReadLn();
+	String continent = AContext->Connection->Socket->ReadLn();
+
+	//unesi u bazu
+	usersTable->Insert();
+	usersTable->FieldByName("username")->AsString = "test";
+	usersTable->FieldByName("password")->AsString = "test";
+	usersTable->FieldByName("firstName")->AsString = "test";
+	usersTable->FieldByName("lastName")->AsString = "test";
+	usersTable->FieldByName("email")->AsString = "test";
+	usersTable->FieldByName("server")->AsString = "test";
+	usersTable->Post();
+
+	//posalji potvrdu da je uspjelo
+    AContext->Connection->Socket->WriteLn("Registracija uspjela!");
+	AContext->Connection->Disconnect();
+}
+//---------------------------------------------------------------------------
+void __fastcall TtcpForm::FormShow(TObject *Sender)
+{
+	portTE->Text = server->DefaultPort;
+    Button1->SetFocus();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TtcpForm::Button1Click(TObject *Sender)
+{
+    tcpForm->Close();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TtcpForm::Button2Click(TObject *Sender)
+{
+    usersTable->Insert();
+	usersTable->FieldByName("username")->AsString = "test";
+	usersTable->FieldByName("password")->AsString = "test";
+	usersTable->FieldByName("firstName")->AsString = "test";
+	usersTable->FieldByName("lastName")->AsString = "test";
+	usersTable->FieldByName("email")->AsString = "test";
+	usersTable->FieldByName("server")->AsString = "test";
+    usersTable->FieldByName("admin")->AsInteger = 0;
+	usersTable->Post();
+}
+//---------------------------------------------------------------------------
+

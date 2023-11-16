@@ -1,0 +1,121 @@
+{
+  "itemsList": [
+    {
+      "itemName": "Dorans Ring",
+      "type": "Starting Item",
+      "stat1": "Abbility power",
+      "power1": "20",
+      "stat2": "Health",
+      "power2": "70",
+      "cost": "400"
+    },
+    {
+      "itemName": "Dorans Blade",
+      "type": "Starting Item",
+      "stat1": "Attack Damage",
+      "power1": "8",
+      "stat2": "Health",
+      "power2": "80",
+      "cost": "450"
+    },
+    {
+      "itemName": "Dorans Shield",
+      "type": "Starting Item",
+      "stat1": "Health",
+      "power1": "85",
+      "stat2": "Health Regen",
+      "power2": "6",
+      "cost": "450"
+    },
+    {
+      "itemName": "Tier 1 Boots",
+      "type": "Boots",
+      "stat1": "Move Speed",
+      "power1": "25",
+      "stat2": "",
+      "power2": "",
+      "cost": "300"
+    },
+    {
+      "itemName": "Lucids",
+      "type": "Boots",
+      "stat1": "Move Speed",
+      "power1": "20",
+      "stat2": "Abbility Haste",
+      "power2": "8",
+      "cost": "900"
+    },
+    {
+      "itemName": "Berserker's Greaves",
+      "type": "Boots",
+      "stat1": "Move Speed",
+      "power1": "45",
+      "stat2": "Attack Speed",
+      "power2": "35%",
+      "cost": "1100"
+    },
+    {
+      "itemName": "Mercury's Treads",
+      "type": "Boots",
+      "stat1": "Move Speed",
+      "power1": "45",
+      "stat2": "Magic Resistance",
+      "power2": "25",
+      "cost": "1100"
+    },
+    {
+      "itemName": "Dagger",
+      "type": "Basic Item",
+      "stat1": "Attack Speed",
+      "power1": "12%",
+      "stat2": "",
+      "power2": "",
+      "cost": "300"
+    },
+    {
+      "itemName": "Long Sword",
+      "type": "Basic Item",
+      "stat1": "Attack Damage",
+      "power1": "10",
+      "stat2": "",
+      "power2": "",
+      "cost": "350"
+    },
+    {
+      "itemName": "Ruby Crystal",
+      "type": "Basic Item",
+      "stat1": "Health",
+      "power1": "150",
+      "stat2": "",
+      "power2": "",
+      "cost": "400"
+    },
+    {
+      "itemName": "Zeal",
+      "type": "Epic Item",
+      "stat1": "Attack Speed",
+      "power1": "18%",
+      "stat2": "Crit Chance",
+      "power2": "15%",
+      "cost": "1050"
+    },
+    {
+      "itemName": "The Collector",
+      "type": "Legendary Item",
+      "stat1": "Attack Damage",
+      "power1": "55",
+      "stat2": "Crit Chance",
+      "power2": "20%",
+      "cost": "300"
+    },
+    {
+      "itemName": "Hextech Rocketbelt",
+      "type": "Mythic Item",
+      "stat1": "Abbility power",
+      "power1": "85",
+      "stat2": "Health",
+      "power2": "250",
+      "cost": "3200"
+    }
+  ]
+}

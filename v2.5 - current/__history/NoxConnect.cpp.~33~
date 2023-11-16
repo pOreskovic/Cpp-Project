@@ -1,0 +1,49 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+#include <tchar.h>
+//---------------------------------------------------------------------------
+USEFORM("settingsLogs.cpp", logsPage);
+USEFORM("settings.cpp", settingsPage);
+USEFORM("register.cpp", registerPage);
+USEFORM("skins.cpp", skinsPage);
+USEFORM("builder.cpp", itemsPage);
+USEFORM("admin.cpp", adminPage);
+USEFORM("Login.cpp", loginPage);
+USEFORM("main.cpp", mainPage);
+//---------------------------------------------------------------------------
+int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
+{
+	try
+	{
+		Application->Initialize();
+		Application->MainFormOnTaskBar = true;
+		Application->CreateForm(__classid(TloginPage), &loginPage);
+		Application->CreateForm(__classid(TregisterPage), &registerPage);
+		Application->CreateForm(__classid(TmainPage), &mainPage);
+		Application->CreateForm(__classid(TsettingsPage), &settingsPage);
+		Application->CreateForm(__classid(TadminPage), &adminPage);
+		Application->CreateForm(__classid(TitemsPage), &itemsPage);
+		Application->CreateForm(__classid(TskinsPage), &skinsPage);
+		Application->CreateForm(__classid(TlogsPage), &logsPage);
+		Application->Run();
+	}
+	catch (Exception &exception)
+	{
+		Application->ShowException(&exception);
+	}
+	catch (...)
+	{
+		try
+		{
+			throw Exception("");
+		}
+		catch (Exception &exception)
+		{
+			Application->ShowException(&exception);
+		}
+	}
+	return 0;
+}
+//---------------------------------------------------------------------------

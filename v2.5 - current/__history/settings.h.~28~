@@ -1,0 +1,70 @@
+//---------------------------------------------------------------------------
+
+#ifndef settingsH
+#define settingsH
+//---------------------------------------------------------------------------
+#include <System.Classes.hpp>
+#include <Vcl.Controls.hpp>
+#include <Vcl.StdCtrls.hpp>
+#include <Vcl.Forms.hpp>
+#include <Vcl.ExtCtrls.hpp>
+#include <Vcl.Imaging.pngimage.hpp>
+#include <Vcl.DBCtrls.hpp>
+#include <IdBaseComponent.hpp>
+#include <IdComponent.hpp>
+#include <IdHTTP.hpp>
+#include <IdTCPClient.hpp>
+#include <IdTCPConnection.hpp>
+#include <IdIntercept.hpp>
+#include <IdInterceptThrottler.hpp>
+#include <Vcl.ComCtrls.hpp>
+#include <map>
+//---------------------------------------------------------------------------
+class TsettingsPage : public TForm
+{
+__published:	// IDE-managed Components
+	TImage *settingsTitleImage;
+	TGroupBox *settingsGroup;
+	TButton *settingsConfirmBTN;
+	TImage *hrvImage;
+	TImage *engImage;
+	TRadioButton *croRB;
+	TRadioButton *engRB;
+	TGroupBox *langBox;
+	TGroupBox *styleBox;
+	TRadioButton *lightBTN;
+	TRadioButton *noxBTN;
+	TGroupBox *fontBox;
+	TComboBox *fontSizeCB;
+	TLabel *fontSizeL;
+	TLabel *Label1;
+	TComboBox *fontCB;
+	TImage *logBTN;
+	TGroupBox *wallpaperBox;
+	TGroupBox *downloadBox;
+	TIdHTTP *download;
+	TIdInterceptThrottler *speedLimiter;
+	TProgressBar *progBar;
+	TButton *startDownload;
+	TButton *setSpeedBTN;
+	TEdit *setSpeedTE;
+	TLabel *speedL;
+	TLabel *completedL;
+	TLabel *instructionsL;
+	void __fastcall settingsConfirmBTNClick(TObject *Sender);
+	void __fastcall FormShow(TObject *Sender);
+	void __fastcall hrvImageClick(TObject *Sender);
+	void __fastcall engImageClick(TObject *Sender);
+	void __fastcall logBTNClick(TObject *Sender);
+	void __fastcall startDownloadClick(TObject *Sender);
+
+
+private:	// User declarations
+public:		// User declarations
+	std::map<String, std::map<String, String>> translation;
+	__fastcall TsettingsPage(TComponent* Owner);
+};
+//---------------------------------------------------------------------------
+extern PACKAGE TsettingsPage *settingsPage;
+//---------------------------------------------------------------------------
+#endif
